@@ -19,7 +19,7 @@ The adress (uri) of your TeamCity server
 teamcity_server_url: https://localhost
 ```
 
-Account, that you cat specify at this variable, must to be configured on the target in advance.
+Account, that you can specify at this variable, must to be configured on the target in advance.
 ```
 teamcity_build_username: "{{ teamcity-agent | default(ansible_user) }}"
 ```
