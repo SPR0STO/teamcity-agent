@@ -1,0 +1,22 @@
+#
+---
+dependencies: []
+
+galaxy_info:
+  role_name: teamcity-agent
+  author: "Sergey SPR0STO"
+  description: "Installing and configure simple teamcity build agent"
+  company: ""
+  license: ""
+  min_ansible_version: 2.1
+  platforms:
+    - name: Ubuntu
+      versions:
+        - all
+    - name: Debian
+      versions:
+        - all
+  galaxy_tags:
+    - system
+    - development
+    - teamcity
