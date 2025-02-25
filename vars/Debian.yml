@@ -1,0 +1,4 @@
+#
+---
+
+teamcity_agent_install_dir: "/home/{{ teamcity_build_username | default(ansible_user)  }}/agent"

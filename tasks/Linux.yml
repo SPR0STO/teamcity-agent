@@ -1,0 +1,53 @@
+# 
+---
+
+- name: Creating teamcity agent install directory
+  ansible.builtin.file:
+    path: "{{ teamcity_agent_install_dir }}"
+    state: directory
+    mode: "0755"
+
+- name: Unpacking distribution
+  ansible.builtin.unarchive:
+    src: "{{ teamcity_server_url }}/update/buildAgent.zip"
+    dest: "{{ teamcity_agent_install_dir }}"
+    owner: "{{ teamcity_build_username | default(ansible_user) }}"
+    group: "{{ teamcity_build_username | default(ansible_user) }}"
+    remote_src: true
+
+- name: Configuring buildAgent.properties
+  ansible.builtin.template:
+    src: buildAgent.properties.j2
+    dest: "{{ teamcity_agent_install_dir }}/conf/buildAgent.properties"
+    mode: u=rw,g=r,o=r
+
+- name: Changing ownership of all Build Agent files
+  ansible.builtin.file:
+    path: "{{ teamcity_agent_install_dir }}"
+    owner: "{{ teamcity_build_username | default(ansible_user) }}"
+    recurse: true
+  become: true
+
+- name: Configuring TeamCity systemd unit
+  ansible.builtin.template:
+    src: teamcity-agent.service.j2
+    dest: "/etc/systemd/system/teamcity-agent.service"
+    mode: u=rw,g=r,o=r
+  become: true
+  when: ansible_os_family in ['Debian', 'RedHat']
+
+- name: Force systemd to reread configs
+  ansible.builtin.systemd:
+    daemon_reload: true
+  become: true
+  when: ansible_os_family in ['Debian', 'RedHat']
+
+- name: Starting agent
+  ansible.builtin.service:
+    name: teamcity-agent
+    state: started
+    enabled: true
+    daemon_reload: true
+  become: true
+  when: ansible_os_family in ['Debian', 'RedHat']
+
